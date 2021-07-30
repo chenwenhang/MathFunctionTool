@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="utf-8">
+
+    <!-- 移动端自适应 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <link href="public/css/bootstrap.min.css" rel="stylesheet">
+    <link href="public/css/style.css" rel="stylesheet">
+    <title>函数绘制工具</title>
+</head>
+
+<body>
+    <noscript>
+        You need to enable JavaScript to run this app.
+    </noscript>
+    <div class="container">
+        <!-- 选择函数类型 -->
+        <div class="row">
+            <div class="col">
+                <ul class="nav nav-pills nav-fill">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">无参函数</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">有参函数</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 设置x和y的范围 -->
+        <div class="row">
+            <div class="col">
+                <div class="input-group">
+                    <input type="number" class="form-control" aria-label="min_x">
+                    <span class="input-group-text">&lt; x &lt;</span>
+                    <input type="number" class="form-control" aria-label="max_x">
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group">
+                    <input type="number" class="form-control" aria-label="min_y">
+                    <span class="input-group-text">&lt; y &lt;</span>
+                    <input type="number" class="form-control" aria-label="max_y">
+                </div>
+            </div>
+        </div>
+
+        <!-- 图像 -->
+        <div class="row">
+            <div class="col">
+                <div id="root"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 引入外部库 -->
+    <script src="public/js/jquery-3.6.0.min.js"></script>
+    <script src="public/js/function-plot.js"></script>
+
+    <!-- 函数绘制 -->
+    <script src="public/js/draw_function.js"></script>
+</body>
+
+</html>

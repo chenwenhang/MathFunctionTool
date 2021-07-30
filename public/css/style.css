@@ -1,0 +1,16 @@
+/* #root{
+    margin-top: 20px;
+} */
+body{
+    padding-top: 10px;
+}
+.col{
+    margin: 5px;
+}
+circle{
+    background-color: black;
+    r: 2;
+    opacity: 1;
+    fill: black;
+    stroke: black;
+}
