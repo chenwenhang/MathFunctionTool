@@ -13,57 +13,142 @@
 </head>
 
 <body>
-    <noscript>
-        You need to enable JavaScript to run this app.
-    </noscript>
-    <div class="container">
-        <!-- 选择函数类型 -->
-        <div class="row">
-            <div class="col">
-                <ul class="nav nav-pills nav-fill">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">无参函数</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">有参函数</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+    <div id="app">
+        <noscript>
+            You need to enable JavaScript to run this app.
+        </noscript>
 
-        <!-- 设置x和y的范围 -->
-        <div class="row">
-            <div class="col">
-                <div class="input-group">
-                    <input type="number" class="form-control" aria-label="min_x">
-                    <span class="input-group-text">&lt; x &lt;</span>
-                    <input type="number" class="form-control" aria-label="max_x">
+        <h1>函数绘制工具</h1>
+
+        <div class="container">
+            <!-- 设置x和y的范围 -->
+            <div class="row">
+                <div class="col">
+                    <div class="input-group">
+                        <input type="number" class="form-control" aria-label="min_x" v-model="min_x">
+                        <span class="input-group-text">&lt; x &lt;</span>
+                        <input type="number" class="form-control" aria-label="max_x" v-model="max_x">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="input-group">
+                        <input type="number" class="form-control" aria-label="min_y" v-model="min_y">
+                        <span class="input-group-text">&lt; y &lt;</span>
+                        <input type="number" class="form-control" aria-label="max_y" v-model="max_y">
+                    </div>
                 </div>
             </div>
-            <div class="col">
-                <div class="input-group">
-                    <input type="number" class="form-control" aria-label="min_y">
-                    <span class="input-group-text">&lt; y &lt;</span>
-                    <input type="number" class="form-control" aria-label="max_y">
+
+            <!-- 函数 -->
+            <div id="function_box">
+                <div class="row" id="function_item" v-for="(fun, index) in func_list">
+                    <div class="col">
+                        <div class="card func-card" id="function_detail">
+                            <button type="button" class="btn-close" aria-label="Close" id="close_button"
+                                v-on:click="del_fuction(index)"></button>
+                            <select class="form-select mb-3" aria-label="Default select example" v-model="fun.fnType">
+                                <option value="normal">普通函数</option>
+                                <option value="polar">极坐标方程</option>
+                                <option value="parametric">参数方程</option>
+                                <option value="point">数据点</option>
+                                <option value="haveparam" disabled>有参函数</option>
+                                <option value="integral" disabled>积分</option>
+                                <option value="differential" disabled>微分</option>
+                            </select>
+
+                            <!-- 普通函数 -->
+                            <div v-if="fun.fnType === 'normal'">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon1">y(x) = </span>
+                                    <input type="text" class="form-control" id="fun_normal" placeholder="请输入函数"
+                                        v-model="fun.fn">
+                                </div>
+                            </div>
+
+                            <!-- 极坐标函数 -->
+                            <div v-if="fun.fnType === 'polar'">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon1">r(theta) = </span>
+                                    <input type="text" class="form-control" id="fun_normal" placeholder="请输入函数"
+                                        v-model="fun.fn_polar">
+                                </div>
+                            </div>
+
+
+                            <!-- 参数方程 -->
+                            <div v-if="fun.fnType === 'parametric'">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon2">x(t) = </span>
+                                    <input type="text" class="form-control" id="fun_parametric_x" placeholder="请输入函数"
+                                        v-model="fun.parametric_fn_x">
+                                </div>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon3">y(t) = </span>
+                                    <input type="text" class="form-control" id="fun_parametric_y" placeholder="请输入函数"
+                                        v-model="fun.parametric_fn_y">
+                                </div>
+                                <div class="input-group mb-3">
+                                    <input type="number" class="form-control" aria-label="min_t"
+                                        v-model="fun.parametric_min_t">
+                                    <span class="input-group-text">π</span>
+                                    <span class="input-group-text">&lt; t &lt;</span>
+                                    <input type="number" class="form-control" aria-label="max_t"
+                                        v-model="fun.parametric_max_t">
+                                    <span class="input-group-text">π</span>
+                                </div>
+                            </div>
+
+                            <!-- 数据点 -->
+                            <div v-if="fun.fnType === 'point'">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">(</span>
+                                    <input type="number" class="form-control" aria-label="point_x"
+                                        v-model="fun.point_x">
+                                    <span class="input-group-text">,</span>
+                                    <input type="number" class="form-control" aria-label="point_y"
+                                        v-model="fun.point_y">
+                                    <span class="input-group-text">)</span>
+                                </div>
+                            </div>
+
+                            <!-- 有参函数 -->
+
+                            <!-- 积分 -->
+
+                            <!-- 微分 -->
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- 图像 -->
-        <div class="row">
-            <div class="col">
-                <div id="root"></div>
+            <!-- 行为按钮 -->
+            <div class="row">
+                <div class="col">
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-outline-primary" v-on:click="add_function()">添加函数</button>
+
+                        <button class="btn btn-primary" type="button" v-on:click="draw_function()">生成图像</button>
+                    </div>
+                </div>
             </div>
+
+            <!-- 图像 -->
+            <div class="row">
+                <div class="col">
+                    <div id="root"></div>
+                </div>
+            </div>
+
         </div>
 
+        <!-- 引入外部库 -->
+        <script src="public/js/jquery-3.6.0.min.js"></script>
+        <script src="public/js/function-plot.js"></script>
+        <script src="public/js/vue.min.js"></script>
+
+        <!-- 函数绘制 -->
+        <script src="public/js/draw_function.js"></script>
     </div>
-
-    <!-- 引入外部库 -->
-    <script src="public/js/jquery-3.6.0.min.js"></script>
-    <script src="public/js/function-plot.js"></script>
-
-    <!-- 函数绘制 -->
-    <script src="public/js/draw_function.js"></script>
 </body>
 
 </html>

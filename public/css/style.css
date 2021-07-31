@@ -14,3 +14,16 @@ circle{
     fill: black;
     stroke: black;
 }
+.func-card{
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: #fafaff;
+}
+
+h1{
+    text-align: center;
+}
+
+.form-select{
+    margin-top: 10px;
+}
