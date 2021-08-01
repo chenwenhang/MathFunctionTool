@@ -61,6 +61,76 @@ var app = new Vue({
         }]
     },
     methods: {
+        // 函数预处理
+        pre_process: function (func) {
+            function abs_process(func) {
+                let tmp_txt = func.replace(/\|(.*?)\|/g, "abs($&)");
+                func = tmp_txt.replace(/\|/g, "");
+                return func
+            }
+            function arc_process(func, arc_str) {
+                let arc_left = arc_str + "("
+                let arc_right = ""
+                let stack = []
+                tmp_txt = "";
+                switch (arc_str) {
+                    case "arccos":
+                        arc_right = "(cos(";
+                        break;
+                    case "arcsin":
+                        arc_right = "(sin(";
+                        break;
+                    case "arctan":
+                        arc_right = "(tan(";
+                        break;
+                    default:
+                        break;
+                }
+                for (let i = 0; i < func.length; i++) {
+                    let c = func.charAt(i)
+                    if (c === "(") {
+                        if (i >= 6 && func.slice(i - 6, i + 1) === arc_left) {
+                            tmp_txt = tmp_txt.slice(0, tmp_txt.length - 6) + arc_right
+                            stack.push(arc_left)
+                        } else {
+                            tmp_txt += c
+                            stack.push("(")
+                        }
+                    } else if (c === ")") {
+                        let s = stack.pop()
+                        if (s === "(") {
+                            tmp_txt += ")"
+                        } else {
+                            tmp_txt += "))^(-1)"
+                        }
+                    } else {
+                        tmp_txt += c
+                    }
+                }
+                return tmp_txt
+            }
+
+            // func = "arccos(s + arcsin(a(x) + b(x)) + s + arctan(x))"
+            origin = func
+            try {
+                // console.log(func);
+
+                // 1. 替换形如|x|为abs(x)，正则表达式懒惰匹配模式
+                func = abs_process(func)
+
+                // 2. 替换形如arccos(x)为(cos(x))^(-1)，arctan(x)、arcsin(x)同理
+                func = arc_process(func, "arccos")
+                func = arc_process(func, "arcsin")
+                func = arc_process(func, "arctan")
+
+                // console.log(func);
+
+            } catch (exception) {
+                func = origin
+            }
+            return func
+        },
+
         // 绘制函数图像
         draw_function: function () {
             let data = []
@@ -68,20 +138,20 @@ var app = new Vue({
                 switch (ele.fnType) {
                     case "normal":
                         data.push({
-                            fn: ele.fn
+                            fn: this.pre_process(ele.fn)
                         })
                         break;
                     case "polar":
                         data.push({
-                            r: ele.fn_polar,
+                            r: this.pre_process(ele.fn_polar),
                             fnType: "polar",
                             graphType: 'polyline'
                         })
                         break;
                     case "parametric":
                         data.push({
-                            x: ele.parametric_fn_x,
-                            y: ele.parametric_fn_y,
+                            x: this.pre_process(ele.parametric_fn_x),
+                            y: this.pre_process(ele.parametric_fn_y),
                             fnType: "parametric",
                             range: [ele.parametric_min_t * Math.PI, ele.parametric_max_t * Math.PI],
                             graphType: "polyline"
