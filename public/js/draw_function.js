@@ -4,13 +4,14 @@ function plot(param) {
     if (param.data) {
         data = param.data
     }
-    // data.push({
-    //     points: [
-    //         [0, 0],
-    //     ],
-    //     fnType: 'points',
-    //     graphType: 'scatter'
-    // })
+    data.push({
+        points: [
+            [0, 0],
+        ],
+        fnType: 'points',
+        graphType: 'scatter'
+    })
+    $('#root').empty()
     functionPlot({
         target: "#root",
         width: $('#root').width(),
