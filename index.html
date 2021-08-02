@@ -9,13 +9,16 @@
     <meta name="theme-color" content="#000000">
     <link href="public/css/bootstrap.min.css" rel="stylesheet">
     <link href="public/css/style.css" rel="stylesheet">
+    <link href="public/css/bootstrap.font.css" rel="stylesheet">
     <title>函数图像绘制工具</title>
 </head>
 
 <body>
     <div id="app">
         <noscript>
-            You need to enable JavaScript to run this app.
+            本工具运行需要JavaScript语言支持，请不要从QQ中打开该链接，可以尝试：<br>
+            1. 从浏览器打开<br>
+            2. 从微信中打开<br>
         </noscript>
 
         <h1>函数图像绘制工具</h1>
@@ -25,16 +28,16 @@
             <div class="row">
                 <div class="col">
                     <div class="input-group">
-                        <input type="number" class="form-control" aria-label="min_x" v-model="min_x">
+                        <input type="number" class="form-control" aria-label="min_x" v-model="min_x" id="min_x">
                         <span class="input-group-text">&lt; x &lt;</span>
-                        <input type="number" class="form-control" aria-label="max_x" v-model="max_x">
+                        <input type="number" class="form-control" aria-label="max_x" v-model="max_x" id="max_x">
                     </div>
                 </div>
                 <div class="col">
                     <div class="input-group">
-                        <input type="number" class="form-control" aria-label="min_y" v-model="min_y">
+                        <input type="number" class="form-control" aria-label="min_y" v-model="min_y" id="min_y">
                         <span class="input-group-text">&lt; y &lt;</span>
-                        <input type="number" class="form-control" aria-label="max_y" v-model="max_y">
+                        <input type="number" class="form-control" aria-label="max_y" v-model="max_y" id="max_y">
                     </div>
                 </div>
             </div>
@@ -47,7 +50,8 @@
                             <button type="button" class="btn-close" aria-label="Close" id="close_button"
                                 v-on:click="del_fuction(index)"></button>
                             <select class="form-select mb-3" aria-label="Default select example" v-model="fun.fnType">
-                                <option value="normal">普通函数</option>
+                                <option value="normal_explicit">普通函数（显函数）</option>
+                                <option value="normal_implicit">普通函数（隐函数）</option>
                                 <option value="polar">极坐标方程</option>
                                 <option value="parametric">参数方程</option>
                                 <option value="point">数据点</option>
@@ -57,36 +61,805 @@
                             </select>
 
                             <!-- 普通函数 -->
-                            <div v-if="fun.fnType === 'normal'">
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text" id="basic-addon1">y(x) = </span>
-                                    <input type="text" class="form-control" id="fun_normal" placeholder="请输入函数"
-                                        v-model="fun.fn">
+                            <div v-if="fun.fnType === 'normal_explicit' || fun.fnType === 'normal_implicit'">
+                                <div class="accordion mb-3" id="accordionExample">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingOne">
+                                            <div class="input-group">
+                                                <span class="input-group-text" id="basic-addon1"
+                                                    v-if="fun.fnType === 'normal_explicit'">y(x) = </span>
+                                                <span class="input-group-text" id="basic-addon1"
+                                                    v-if="fun.fnType === 'normal_implicit'">0 = </span>
+                                                <input type="text" class="form-control" id="fun_normal"
+                                                    placeholder="请输入函数" v-model="fun.fn" v-bind:ref="'f_'+index">
+                                                <button class="btn btn-outline-primary" type="button"
+                                                    data-bs-toggle="collapse" data-bs-target="#collapse1"
+                                                    aria-expanded="false" aria-controls="collapse1">
+                                                    按键
+                                                </button>
+                                            </div>
+                                        </h2>
+                                        <div id="collapse1" class="accordion-collapse collapse"
+                                            aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('+', index, 'f_'+index, 1, 'fn')">+</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('-', index, 'f_'+index, 1, 'fn')">-</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('*', index, 'f_'+index, 1, 'fn')">*</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('/', index, 'f_'+index, 1, 'fn')">/</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('7', index, 'f_'+index, 1, 'fn')">7</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('8', index, 'f_'+index, 1, 'fn')">8</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('9', index, 'f_'+index, 1, 'fn')">9</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('(', index, 'f_'+index, 1, 'fn')">(</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard(')', index, 'f_'+index, 1, 'fn')">)</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('^', index, 'f_'+index, 1, 'fn')">^</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('|', index, 'f_'+index, 1, 'fn')">|</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('4', index, 'f_'+index, 1, 'fn')">4</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('5', index, 'f_'+index, 1, 'fn')">5</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('6', index, 'f_'+index, 1, 'fn')">6</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('x', index, 'f_'+index, 1, 'fn')">x</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('t', index, 'f_'+index, 1, 'fn')">t</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('θ', index, 'f_'+index, 1, 'fn')">θ</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('e', index, 'f_'+index, 1, 'fn')">e</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('1', index, 'f_'+index, 1, 'fn')">1</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('2', index, 'f_'+index, 1, 'fn')">2</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('3', index, 'f_'+index, 1, 'fn')">3</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('sin()', index, 'f_'+index, 4, 'fn')">sin</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('cos()', index, 'f_'+index, 4, 'fn')">cos</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('tan()', index, 'f_'+index, 4, 'fn')">tan</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('0', index, 'f_'+index, 1, 'fn')">0</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('.', index, 'f_'+index, 1, 'fn')">.</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('arcsin()', index, 'f_'+index, 7, 'fn')">arcsin</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('arccos()', index, 'f_'+index, 7, 'fn')">arccos</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('arctan()', index, 'f_'+index, 7, 'fn')">arctan</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('π', index, 'f_'+index, 1, 'fn')">π</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('sqrt()', index, 'f_'+index, 5, 'fn')">sqrt</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('ln()', index, 'f_'+index, 3, 'fn')">ln</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('log()()', index, 'f_'+index, 4, 'fn')">log</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="keyboard_delete(index, 'f_'+index, 'fn')">删除</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('', index, 'f_'+index, -1, 'fn')">
+                                                            <i class="bi bi-caret-left-fill"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard(' ', index, 'f_'+index, 1, 'fn')">空格</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('', index, 'f_'+index, 1, 'fn')">
+                                                            <i class="bi bi-caret-right-fill"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
                             <!-- 极坐标函数 -->
                             <div v-if="fun.fnType === 'polar'">
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text" id="basic-addon1">r(theta) = </span>
-                                    <input type="text" class="form-control" id="fun_normal" placeholder="请输入函数"
-                                        v-model="fun.fn_polar">
+                                <div class="accordion mb-3" id="accordionExample">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingOne">
+                                            <div class="input-group">
+                                                <span class="input-group-text" id="basic-addon1">r(θ) = </span>
+                                                <input type="text" class="form-control" id="fun_normal_polar"
+                                                    placeholder="请输入函数" v-model="fun.fn_polar"
+                                                    v-bind:ref="'polar_'+index">
+                                                <button class="btn btn-outline-primary" type="button"
+                                                    data-bs-toggle="collapse" data-bs-target="#collapse2"
+                                                    aria-expanded="false" aria-controls="collapse2">
+                                                    按键
+                                                </button>
+                                            </div>
+                                        </h2>
+                                        <div id="collapse2" class="accordion-collapse collapse"
+                                            aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('+', index, 'polar_'+index, 1, 'fn_polar')">+</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('-', index, 'polar_'+index, 1, 'fn_polar')">-</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('*', index, 'polar_'+index, 1, 'fn_polar')">*</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('/', index, 'polar_'+index, 1, 'fn_polar')">/</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('7', index, 'polar_'+index, 1, 'fn_polar')">7</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('8', index, 'polar_'+index, 1, 'fn_polar')">8</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('9', index, 'polar_'+index, 1, 'fn_polar')">9</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('(', index, 'polar_'+index, 1, 'fn_polar')">(</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard(')', index, 'polar_'+index, 1, 'fn_polar')">)</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('^', index, 'polar_'+index, 1, 'fn_polar')">^</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('|', index, 'polar_'+index, 1, 'fn_polar')">|</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('4', index, 'polar_'+index, 1, 'fn_polar')">4</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('5', index, 'polar_'+index, 1, 'fn_polar')">5</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('6', index, 'polar_'+index, 1, 'fn_polar')">6</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('x', index, 'polar_'+index, 1, 'fn_polar')">x</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('t', index, 'polar_'+index, 1, 'fn_polar')">t</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('θ', index, 'polar_'+index, 1, 'fn_polar')">θ</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('e', index, 'polar_'+index, 1, 'fn_polar')">e</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('1', index, 'polar_'+index, 1, 'fn_polar')">1</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('2', index, 'polar_'+index, 1, 'fn_polar')">2</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('3', index, 'polar_'+index, 1, 'fn_polar')">3</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('sin()', index, 'polar_'+index, 4, 'fn_polar')">sin</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('cos()', index, 'polar_'+index, 4, 'fn_polar')">cos</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('tan()', index, 'polar_'+index, 4, 'fn_polar')">tan</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('0', index, 'polar_'+index, 1, 'fn_polar')">0</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('.', index, 'polar_'+index, 1, 'fn_polar')">.</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('arcsin()', index, 'polar_'+index, 7, 'fn_polar')">arcsin</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('arccos()', index, 'polar_'+index, 7, 'fn_polar')">arccos</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('arctan()', index, 'polar_'+index, 7, 'fn_polar')">arctan</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('π', index, 'polar_'+index, 1, 'fn_polar')">π</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('sqrt()', index, 'polar_'+index, 5, 'fn_polar')">sqrt</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('ln()', index, 'polar_'+index, 3, 'fn_polar')">ln</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('log()()', index, 'polar_'+index, 4, 'fn_polar')">log</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="keyboard_delete(index, 'polar_'+index, 'fn_polar')">删除</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('', index, 'polar_'+index, -1, 'fn_polar')">
+                                                            <i class="bi bi-caret-left-fill"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard(' ', index, 'polar_'+index, 1, 'fn_polar')">空格</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('', index, 'polar_'+index, 1, 'fn_polar')">
+                                                            <i class="bi bi-caret-right-fill"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
 
                             <!-- 参数方程 -->
                             <div v-if="fun.fnType === 'parametric'">
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text" id="basic-addon2">x(t) = </span>
-                                    <input type="text" class="form-control" id="fun_parametric_x" placeholder="请输入函数"
-                                        v-model="fun.parametric_fn_x">
+                                <div class="accordion mb-3" id="accordionExample">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingOne">
+                                            <div class="input-group">
+                                                <span class="input-group-text" id="basic-addon2">x(t) = </span>
+                                                <input type="text" class="form-control" id="fun_parametric_x"
+                                                    placeholder="请输入函数" v-model="fun.parametric_fn_x"
+                                                    v-bind:ref="'f_x_'+index">
+                                                <button class="btn btn-outline-primary" type="button"
+                                                    data-bs-toggle="collapse" data-bs-target="#collapse3"
+                                                    aria-expanded="false" aria-controls="collapse3">
+                                                    按键
+                                                </button>
+                                            </div>
+                                        </h2>
+                                        <div id="collapse3" class="accordion-collapse collapse"
+                                            aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('+', index, 'f_x_'+index, 1, 'parametric_fn_x')">+</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('-', index, 'f_x_'+index, 1, 'parametric_fn_x')">-</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('*', index, 'f_x_'+index, 1, 'parametric_fn_x')">*</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('/', index, 'f_x_'+index, 1, 'parametric_fn_x')">/</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('7', index, 'f_x_'+index, 1, 'parametric_fn_x')">7</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('8', index, 'f_x_'+index, 1, 'parametric_fn_x')">8</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('9', index, 'f_x_'+index, 1, 'parametric_fn_x')">9</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('(', index, 'f_x_'+index, 1, 'parametric_fn_x')">(</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard(')', index, 'f_x_'+index, 1, 'parametric_fn_x')">)</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('^', index, 'f_x_'+index, 1, 'parametric_fn_x')">^</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('|', index, 'f_x_'+index, 1, 'parametric_fn_x')">|</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('4', index, 'f_x_'+index, 1, 'parametric_fn_x')">4</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('5', index, 'f_x_'+index, 1, 'parametric_fn_x')">5</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('6', index, 'f_x_'+index, 1, 'parametric_fn_x')">6</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('x', index, 'f_x_'+index, 1, 'parametric_fn_x')">x</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('t', index, 'f_x_'+index, 1, 'parametric_fn_x')">t</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('θ', index, 'f_x_'+index, 1, 'parametric_fn_x')">θ</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('e', index, 'f_x_'+index, 1, 'parametric_fn_x')">e</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('1', index, 'f_x_'+index, 1, 'parametric_fn_x')">1</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('2', index, 'f_x_'+index, 1, 'parametric_fn_x')">2</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('3', index, 'f_x_'+index, 1, 'parametric_fn_x')">3</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('sin()', index, 'f_x_'+index, 4, 'parametric_fn_x')">sin</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('cos()', index, 'f_x_'+index, 4, 'parametric_fn_x')">cos</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('tan()', index, 'f_x_'+index, 4, 'parametric_fn_x')">tan</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('0', index, 'f_x_'+index, 1, 'parametric_fn_x')">0</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('.', index, 'f_x_'+index, 1, 'parametric_fn_x')">.</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('arcsin()', index, 'f_x_'+index, 7, 'parametric_fn_x')">arcsin</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('arccos()', index, 'f_x_'+index, 7, 'parametric_fn_x')">arccos</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('arctan()', index, 'f_x_'+index, 7, 'parametric_fn_x')">arctan</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('π', index, 'f_x_'+index, 1, 'parametric_fn_x')">π</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('sqrt()', index, 'f_x_'+index, 5, 'parametric_fn_x')">sqrt</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('ln()', index, 'f_x_'+index, 3, 'parametric_fn_x')">ln</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('log()()', index, 'f_x_'+index, 4, 'parametric_fn_x')">log</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="keyboard_delete(index, 'f_x_'+index, 'parametric_fn_x')">删除</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('', index, 'f_x_'+index, -1, 'parametric_fn_x')">
+                                                            <i class="bi bi-caret-left-fill"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard(' ', index, 'f_x_'+index, 1, 'parametric_fn_x')">空格</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('', index, 'f_x_'+index, 1, 'parametric_fn_x')">
+                                                            <i class="bi bi-caret-right-fill"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text" id="basic-addon3">y(t) = </span>
-                                    <input type="text" class="form-control" id="fun_parametric_y" placeholder="请输入函数"
-                                        v-model="fun.parametric_fn_y">
+
+                                <div class="accordion mb-3" id="accordionExample">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingOne">
+                                            <div class="input-group">
+                                                <span class="input-group-text" id="basic-addon3">y(t) = </span>
+                                                <input type="text" class="form-control" id="fun_parametric_y"
+                                                    placeholder="请输入函数" v-model="fun.parametric_fn_y"
+                                                    v-bind:ref="'f_y_'+index">
+                                                <button class="btn btn-outline-primary" type="button"
+                                                    data-bs-toggle="collapse" data-bs-target="#collapse4"
+                                                    aria-expanded="false" aria-controls="collapse4">
+                                                    按键
+                                                </button>
+                                            </div>
+                                        </h2>
+                                        <div id="collapse4" class="accordion-collapse collapse"
+                                            aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('+', index, 'f_y_'+index, 1, 'parametric_fn_y')">+</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('-', index, 'f_y_'+index, 1, 'parametric_fn_y')">-</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('*', index, 'f_y_'+index, 1, 'parametric_fn_y')">*</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('/', index, 'f_y_'+index, 1, 'parametric_fn_y')">/</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('7', index, 'f_y_'+index, 1, 'parametric_fn_y')">7</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('8', index, 'f_y_'+index, 1, 'parametric_fn_y')">8</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('9', index, 'f_y_'+index, 1, 'parametric_fn_y')">9</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('(', index, 'f_y_'+index, 1, 'parametric_fn_y')">(</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard(')', index, 'f_y_'+index, 1, 'parametric_fn_y')">)</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('^', index, 'f_y_'+index, 1, 'parametric_fn_y')">^</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('|', index, 'f_y_'+index, 1, 'parametric_fn_y')">|</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('4', index, 'f_y_'+index, 1, 'parametric_fn_y')">4</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('5', index, 'f_y_'+index, 1, 'parametric_fn_y')">5</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('6', index, 'f_y_'+index, 1, 'parametric_fn_y')">6</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('x', index, 'f_y_'+index, 1, 'parametric_fn_y')">x</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('t', index, 'f_y_'+index, 1, 'parametric_fn_y')">t</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('θ', index, 'f_y_'+index, 1, 'parametric_fn_y')">θ</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('e', index, 'f_y_'+index, 1, 'parametric_fn_y')">e</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('1', index, 'f_y_'+index, 1, 'parametric_fn_y')">1</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('2', index, 'f_y_'+index, 1, 'parametric_fn_y')">2</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('3', index, 'f_y_'+index, 1, 'parametric_fn_y')">3</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('sin()', index, 'f_y_'+index, 4, 'parametric_fn_y')">sin</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('cos()', index, 'f_y_'+index, 4, 'parametric_fn_y')">cos</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('tan()', index, 'f_y_'+index, 4, 'parametric_fn_y')">tan</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('0', index, 'f_y_'+index, 1, 'parametric_fn_y')">0</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('.', index, 'f_y_'+index, 1, 'parametric_fn_y')">.</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('arcsin()', index, 'f_y_'+index, 7, 'parametric_fn_y')">arcsin</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('arccos()', index, 'f_y_'+index, 7, 'parametric_fn_y')">arccos</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('arctan()', index, 'f_y_'+index, 7, 'parametric_fn_y')">arctan</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('π', index, 'f_y_'+index, 1, 'parametric_fn_y')">π</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('sqrt()', index, 'f_y_'+index, 5, 'parametric_fn_y')">sqrt</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('ln()', index, 'f_y_'+index, 3, 'parametric_fn_y')">ln</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('log()()', index, 'f_y_'+index, 4, 'parametric_fn_y')">log</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="keyboard_delete(index, 'f_y_'+index, 'parametric_fn_y')">删除</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-start">
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('', index, 'f_y_'+index, -1, 'parametric_fn_y')">
+                                                            <i class="bi bi-caret-left-fill"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard(' ', index, 'f_y_'+index, 1, 'parametric_fn_y')">空格</button>
+                                                    </div>
+                                                    <div class="col grid_btn d-grid">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                            v-on:click="click_keyboard('', index, 'f_y_'+index, 1, 'parametric_fn_y')">
+                                                            <i class="bi bi-caret-right-fill"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
+
+
+
+
                                 <div class="input-group mb-3">
                                     <input type="number" class="form-control" aria-label="min_t"
                                         v-model="fun.parametric_min_t">
@@ -116,18 +889,20 @@
                             <!-- 积分 -->
 
                             <!-- 微分 -->
+
+
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- 行为按钮 -->
-            <div class="row">
-                <div class="col">
-                    <div class="d-grid gap-2">
-                        <button type="button" class="btn btn-outline-primary" v-on:click="add_function()">添加函数</button>
-
-                        <button class="btn btn-primary" type="button" v-on:click="draw_function()">生成图像</button>
+                <!-- 行为按钮 -->
+                <div class="row">
+                    <div class="col">
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-outline-primary"
+                                v-on:click="add_function()">添加函数</button>
+                            <button class="btn btn-primary" type="button" v-on:click="draw_function()">生成图像</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -139,12 +914,25 @@
                 </div>
             </div>
 
+            <!-- 版权 -->
+            <div class="row footer_box">
+                <div class="col">
+                    <figure class="text-center page_footer">
+                        <figcaption class="blockquote blockquote-footer">
+                            Copyright © Wenhang Chen 陈文航 版权所有
+                        </figcaption>
+                    </figure>
+
+                </div>
+            </div>
+
         </div>
 
         <!-- 引入外部库 -->
         <script src="public/js/jquery-3.6.0.min.js"></script>
-        <script src="public/js/function-plot.js"></script>
+        <script src="public/js/function-plot.min.js"></script>
         <script src="public/js/vue.min.js"></script>
+        <script src="public/js/bootstrap.min.js"></script>
 
         <!-- 函数绘制 -->
         <script src="public/js/draw_function.js"></script>

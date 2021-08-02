@@ -27,3 +27,24 @@ h1{
 .form-select{
     margin-top: 10px;
 }
+
+.grid_btn{
+    padding-left: 0;
+    padding-right: 0;
+    display: grid;
+}
+
+.footer_box{
+    margin-top: 1.5em;
+    height: 8em;
+    background-color: #f8f9fa!important;
+}
+
+.page_footer{
+    margin-top: 4em;
+    font-size: .9em;
+    color: #6c757d;
+}
+.blockquote-footer:before{
+    content: "";
+}
