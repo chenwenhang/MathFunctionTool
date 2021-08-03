@@ -1,46 +1,4 @@
 /* jshint esversion: 6 */
-function plot(param) {
-    data = []
-    if (param.data) {
-        data = param.data
-    }
-    data.push({
-        points: [
-            [0, 0],
-        ],
-        fnType: 'points',
-        graphType: 'scatter'
-    })
-    $('#root').empty()
-    functionPlot({
-        target: "#root",
-        width: $('#root').width(),
-        height: $('#root').width(),
-        xAxis: {
-            domain: param.x_range
-        },
-        yAxis: {
-            domain: param.y_range
-        },
-        grid: true,
-        data: data
-    });
-}
-
-$(document).ready(function () {
-    plot({
-        x_range: [-5, 5],
-        y_range: [-5, 5],
-    });
-});
-
-$(window).resize(function () {
-    plot({
-        x_range: [-5, 5],
-        y_range: [-5, 5],
-    });
-});
-
 var app = new Vue({
     el: '#app',
     data: {
@@ -68,7 +26,12 @@ var app = new Vue({
             function mul_process(func) {
                 // 补全^后面的括号
                 let tmp_txt = func
-                tmp_txt = tmp_txt.replace(/(?<=\^)([0-9]*[a-zA-Zθ]*)/g, "($&)");
+
+                // 哇我的真的服了，IOS不支持正则表达式零宽断言（形如(?<=sin)），会导致所有safri内核的浏览器全部加载异常，例如下面这个零宽断言就要被重写为函数回调形式
+                // tmp_txt = tmp_txt.replace(/(?<=\^)([0-9]*[a-zA-Zθ]*)/g, "($&)");
+                tmp_txt = tmp_txt.replace(/\^([0-9]*[a-zA-Zθ]*)/g, function (word) {
+                    return "^(" + word.substring(1, word.length) + ")";
+                });
                 return tmp_txt
             }
             function abs_process(func) {
@@ -80,25 +43,41 @@ var app = new Vue({
             function nobrackets_process(func) {
                 let tmp_txt = func
                 // 支持所有三角函数不带括号的情况
-                tmp_txt = tmp_txt.replace(/(?<=sin)([0-9]*[a-zA-Zθ]+)/g, "($&)");
-                tmp_txt = tmp_txt.replace(/(?<=cos)([0-9]*[a-zA-Zθ]+)/g, "($&)");
-                tmp_txt = tmp_txt.replace(/(?<=tan)([0-9]*[a-zA-Zθ]+)/g, "($&)");
-                tmp_txt = tmp_txt.replace(/(?<=arccos)([0-9]*[a-zA-Zθ]+)/g, "($&)");
-                tmp_txt = tmp_txt.replace(/(?<=arcsin)([0-9]*[a-zA-Zθ]+)/g, "($&)");
-                tmp_txt = tmp_txt.replace(/(?<=arctan)([0-9]*[a-zA-Zθ]+)/g, "($&)");
+                tmp_txt = tmp_txt.replace(/sin([0-9]*[a-zA-Zθ]+)/g, function (word) {
+                    return "sin(" + word.substring(3, word.length) + ")";
+                });
+                tmp_txt = tmp_txt.replace(/cos([0-9]*[a-zA-Zθ]+)/g, function (word) {
+                    return "cos(" + word.substring(3, word.length) + ")";
+                });
+                tmp_txt = tmp_txt.replace(/tan([0-9]*[a-zA-Zθ]+)/g, function (word) {
+                    return "tan(" + word.substring(3, word.length) + ")";
+                });
+                tmp_txt = tmp_txt.replace(/arccos([0-9]*[a-zA-Zθ]+)/g, function (word) {
+                    return "arccos(" + word.substring(6, word.length) + ")";
+                });
+                tmp_txt = tmp_txt.replace(/arcsin([0-9]*[a-zA-Zθ]+)/g, function (word) {
+                    return "arcsin(" + word.substring(6, word.length) + ")";
+                });
+                tmp_txt = tmp_txt.replace(/arctan([0-9]*[a-zA-Zθ]+)/g, function (word) {
+                    return "arctan(" + word.substring(6, word.length) + ")";
+                });
                 return tmp_txt
             }
             function pi_process(func) {
                 // 处理所有的π
                 let tmp_txt = func
-                tmp_txt = tmp_txt.replace(/(?<=π)([a-zA-Zθ]+)/g, "*$&");
+                tmp_txt = tmp_txt.replace(/π([a-zA-Zθ]+)/g, function (word) {
+                    return "π*" + word.substring(1, word.length);
+                });
                 tmp_txt = tmp_txt.replace(/π/g, "PI");
                 return tmp_txt
             }
             function theta_process(func) {
                 // 处理所有的θ
                 let tmp_txt = func
-                tmp_txt = tmp_txt.replace(/(?<=θ)([a-zA-Zθ]+)/g, "*$&");
+                tmp_txt = tmp_txt.replace(/θ([a-zA-Zθ]+)/g, function (word) {
+                    return "θ*" + word.substring(1, word.length);
+                });
                 tmp_txt = tmp_txt.replace(/θ/g, "theta");
                 return tmp_txt
             }
@@ -110,8 +89,12 @@ var app = new Vue({
                     return "e^" + word.substring(3, word.length);
                 });
                 tmp_txt = tmp_txt.replace(/theta/g, "θ"); // 先替换theta为θ
-                tmp_txt = tmp_txt.replace(/(?<=e)([a-zA-Zθ]+)/g, "*$&"); // 填充后面的*
-                tmp_txt = tmp_txt.replace(/(?<=[0-9]+)(e)/g, "*$&"); // 填充前面的*
+                tmp_txt = tmp_txt.replace(/e([a-zA-Zθ]+)/g, function (word) { // 填充后面的*
+                    return "e*" + word.substring(1, word.length);
+                });
+                tmp_txt = tmp_txt.replace(/[0-9]+e/g, function (word) { // 填充前面的*
+                    return word.substring(0, word.length - 1) + "*e";
+                });
                 tmp_txt = tmp_txt.replace(/e(\^\([0-9]*[a-zA-Zθ]*\))/g, function (word) { // 处理e^kx的情况，当做 EXPRESSION_TMP(kx)
                     return "EXPRESSION_TMP" + word.substring(2, word.length);
                 });
@@ -346,3 +329,46 @@ var app = new Vue({
     }
 
 })
+
+
+function plot(param) {
+    data = []
+    if (param.data) {
+        data = param.data
+    }
+    data.push({
+        points: [
+            [0, 0],
+        ],
+        fnType: 'points',
+        graphType: 'scatter'
+    })
+    $('#root').empty()
+    functionPlot({
+        target: "#root",
+        width: $('#root').width(),
+        height: $('#root').width(),
+        xAxis: {
+            domain: param.x_range
+        },
+        yAxis: {
+            domain: param.y_range
+        },
+        grid: true,
+        data: data
+    });
+}
+
+$(document).ready(function () {
+    plot({
+        x_range: [-5, 5],
+        y_range: [-5, 5],
+    });
+});
+
+$(window).resize(function () {
+    plot({
+        x_range: [-5, 5],
+        y_range: [-5, 5],
+    });
+});
