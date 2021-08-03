@@ -195,6 +195,44 @@ var app = new Vue({
             return func
         },
 
+        get_cipher_text_reply: function (key) {
+            key = escape(key)
+            // console.log(key);
+            let c_map = {
+                "%u6211%u559C%u6B22%u4F60": "%u6211%u4E5F%u559C%u6B22%u4F60",
+                "%u6211%u7231%u4F60": "%u4E5F%u7231%u4F60",
+            }
+            if (key in c_map) {
+                return unescape(c_map[key])
+            } else {
+                return false
+            }
+        },
+
+        credit_reply: function (ls) {
+            for (let i = 0; i < ls.length; i++) {
+                let ele = ls[i];
+                let sentence = "";
+                switch (ele.fnType) {
+                    case "normal_explicit": sentence = ele.fn; break;
+                    case "normal_implicit": sentence = ele.fn; break;
+                    case "polar": sentence = ele.fn_polar; break;
+                    case "parametric": sentence = ele.parametric_fn_x == "" ? ele.parametric_fn_y : ele.parametric_fn_x; break;
+                    case "point": break;
+                    case "haveparam": break;
+                    case "integral": break;
+                    case "differential": break;
+                    default: break;
+                }
+                let reply = this.get_cipher_text_reply(sentence.trim())
+                if (reply) {
+                    alert(reply);
+                    return true;
+                }
+            }
+            return false;
+        },
+
         // 绘制函数图像
         draw_function: function () {
             let data = []
@@ -249,6 +287,9 @@ var app = new Vue({
                         break;
                 }
             });
+            if (this.credit_reply(this.func_list)) {
+                return
+            }
             try {
                 plot({
                     data: data,
