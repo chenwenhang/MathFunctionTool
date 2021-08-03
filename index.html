@@ -80,7 +80,7 @@
                             <div v-if="fun.fnType === 'normal_explicit' || fun.fnType === 'normal_implicit'">
                                 <div class="accordion mb-3" id="accordionExample">
                                     <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingOne">
+                                        <h2 class="accordion-header" v-bind:id="'heading1_' + index">
                                             <div class="input-group">
                                                 <span class="input-group-text" id="basic-addon1"
                                                     v-if="fun.fnType === 'normal_explicit'">y(x) = </span>
@@ -89,14 +89,14 @@
                                                 <input type="text" class="form-control" id="fun_normal"
                                                     placeholder="请输入函数" v-model="fun.fn" v-bind:ref="'f_'+index">
                                                 <button class="btn btn-outline-primary" type="button"
-                                                    data-bs-toggle="collapse" data-bs-target="#collapse1"
-                                                    aria-expanded="false" aria-controls="collapse1">
+                                                    data-bs-toggle="collapse" v-bind:data-bs-target="'#collapse1_' + index"
+                                                    aria-expanded="false" v-bind:aria-controls="'collapse1_' + index">
                                                     按键
                                                 </button>
                                             </div>
                                         </h2>
-                                        <div id="collapse1" class="accordion-collapse collapse"
-                                            aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                        <div v-bind:id="'collapse1_' + index" class="accordion-collapse collapse"
+                                            v-bind:aria-labelledby="'heading1_' + index" data-bs-parent="#accordionExample">
                                             <div class="accordion-body">
 
                                                 <div class="row align-items-start">
@@ -282,21 +282,21 @@
                             <div v-if="fun.fnType === 'polar'">
                                 <div class="accordion mb-3" id="accordionExample">
                                     <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingOne">
+                                        <h2 class="accordion-header" v-bind:id="'heading2_' + index">
                                             <div class="input-group">
                                                 <span class="input-group-text" id="basic-addon1">r(θ) = </span>
                                                 <input type="text" class="form-control" id="fun_normal_polar"
                                                     placeholder="请输入函数" v-model="fun.fn_polar"
                                                     v-bind:ref="'polar_'+index">
                                                 <button class="btn btn-outline-primary" type="button"
-                                                    data-bs-toggle="collapse" data-bs-target="#collapse2"
-                                                    aria-expanded="false" aria-controls="collapse2">
+                                                    data-bs-toggle="collapse" v-bind:data-bs-target="'#collapse1_' + index"
+                                                    aria-expanded="false" v-bind:aria-controls="'collapse1_' + index">
                                                     按键
                                                 </button>
                                             </div>
                                         </h2>
-                                        <div id="collapse2" class="accordion-collapse collapse"
-                                            aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                        <div v-bind:id="'collapse1_' + index" class="accordion-collapse collapse"
+                                        v-bind:aria-labelledby="'heading2_' + index" data-bs-parent="#accordionExample">
                                             <div class="accordion-body">
 
                                                 <div class="row align-items-start">
@@ -483,21 +483,21 @@
                             <div v-if="fun.fnType === 'parametric'">
                                 <div class="accordion mb-3" id="accordionExample">
                                     <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingOne">
+                                        <h2 class="accordion-header" v-bind:id="'heading3_' + index">
                                             <div class="input-group">
                                                 <span class="input-group-text" id="basic-addon2">x(t) = </span>
                                                 <input type="text" class="form-control" id="fun_parametric_x"
                                                     placeholder="请输入函数" v-model="fun.parametric_fn_x"
                                                     v-bind:ref="'f_x_'+index">
                                                 <button class="btn btn-outline-primary" type="button"
-                                                    data-bs-toggle="collapse" data-bs-target="#collapse3"
-                                                    aria-expanded="false" aria-controls="collapse3">
+                                                    data-bs-toggle="collapse" v-bind:data-bs-target="'#collapse3_' + index"
+                                                    aria-expanded="false" v-bind:aria-controls="'collapse3_' + index">
                                                     按键
                                                 </button>
                                             </div>
                                         </h2>
-                                        <div id="collapse3" class="accordion-collapse collapse"
-                                            aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                        <div v-bind:id="'collapse3_' + index" class="accordion-collapse collapse"
+                                        v-bind:aria-labelledby="'heading3_' + index" data-bs-parent="#accordionExample">
                                             <div class="accordion-body">
 
                                                 <div class="row align-items-start">
@@ -679,21 +679,21 @@
 
                                 <div class="accordion mb-3" id="accordionExample">
                                     <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingOne">
+                                        <h2 class="accordion-header" v-bind:id="'heading4_' + index">
                                             <div class="input-group">
                                                 <span class="input-group-text" id="basic-addon3">y(t) = </span>
                                                 <input type="text" class="form-control" id="fun_parametric_y"
                                                     placeholder="请输入函数" v-model="fun.parametric_fn_y"
                                                     v-bind:ref="'f_y_'+index">
                                                 <button class="btn btn-outline-primary" type="button"
-                                                    data-bs-toggle="collapse" data-bs-target="#collapse4"
-                                                    aria-expanded="false" aria-controls="collapse4">
+                                                    data-bs-toggle="collapse" v-bind:data-bs-target="'#collapse4_' + index"
+                                                    aria-expanded="false" v-bind:aria-controls="'collapse4_' + index">
                                                     按键
                                                 </button>
                                             </div>
                                         </h2>
-                                        <div id="collapse4" class="accordion-collapse collapse"
-                                            aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                        <div v-bind:id="'collapse4_' + index" class="accordion-collapse collapse"
+                                        v-bind:aria-labelledby="'heading4_' + index" data-bs-parent="#accordionExample">
                                             <div class="accordion-body">
 
                                                 <div class="row align-items-start">
