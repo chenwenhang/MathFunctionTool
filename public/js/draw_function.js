@@ -81,6 +81,14 @@ var app = new Vue({
                 tmp_txt = tmp_txt.replace(/θ/g, "theta");
                 return tmp_txt
             }
+            function log_process(func) {
+                // 处理所有的log
+                let tmp_txt = func
+                tmp_txt = tmp_txt.replace(/log\([0-9]+\)/g, function (word) {
+                    return "log" + word.substring(4, word.length - 1);
+                });
+                return tmp_txt
+            }
             function exp_process(func) {
                 // 处理e相关，转换为exp()函数
                 let tmp_txt = func
@@ -182,6 +190,9 @@ var app = new Vue({
 
                 // 7，替换θ为theta，且做一些处理
                 func = theta_process(func)
+
+                // 8. 去掉log()()前面的括号
+                func = log_process(func)
 
                 // 最后去除空格
                 func = func.trim()
