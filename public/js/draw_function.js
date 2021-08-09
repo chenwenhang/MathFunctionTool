@@ -252,6 +252,7 @@ var app = new Vue({
                     case "normal_explicit":
                         data.push({
                             fn: this.pre_process(ele.fn),
+                            graphType: 'polyline'
                         })
                         break;
                     case "normal_implicit":
