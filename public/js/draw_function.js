@@ -17,7 +17,8 @@ var app = new Vue({
             point_x: "",
             point_y: "",
             // 光标位置
-            pointer: 0
+            pointer: 0,
+            color: ""
         }]
     },
     methods: {
@@ -252,20 +253,23 @@ var app = new Vue({
                     case "normal_explicit":
                         data.push({
                             fn: this.pre_process(ele.fn),
-                            graphType: 'polyline'
+                            graphType: 'polyline',
+                            color: ele.color
                         })
                         break;
                     case "normal_implicit":
                         data.push({
                             fn: this.pre_process(ele.fn),
                             fnType: "implicit",
+                            color: ele.color
                         })
                         break;
                     case "polar":
                         data.push({
                             r: this.pre_process(ele.fn_polar),
                             fnType: "polar",
-                            graphType: 'polyline'
+                            graphType: 'polyline',
+                            color: ele.color
                         })
                         break;
                     case "parametric":
@@ -274,7 +278,8 @@ var app = new Vue({
                             y: this.pre_process(ele.parametric_fn_y),
                             fnType: "parametric",
                             range: [ele.parametric_min_t * Math.PI, ele.parametric_max_t * Math.PI],
-                            graphType: "polyline"
+                            graphType: "polyline",
+                            color: ele.color
                         })
                         break;
                     case "point":
@@ -283,7 +288,8 @@ var app = new Vue({
                                 [ele.point_x, ele.point_y],
                             ],
                             fnType: 'points',
-                            graphType: 'scatter'
+                            graphType: 'scatter',
+                            color: ele.color
                         })
                         break;
                     case "haveparam":
