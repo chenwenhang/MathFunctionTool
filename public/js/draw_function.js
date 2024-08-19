@@ -82,6 +82,11 @@ var app = new Vue({
                 tmp_txt = tmp_txt.replace(/θ/g, "theta");
                 return tmp_txt
             }
+            function ln_process(func) {
+                // 将所有的 ln(x) 替换成log(x)(e)，须在 exp_process 前调用
+                let tmp_txt = func.replace(/ln\((.*?)\)/g, "log($1)(e)");
+                return tmp_txt;
+            }
             function log_process(func) {
                 // 处理所有的log
                 let tmp_txt = func
@@ -176,6 +181,7 @@ var app = new Vue({
                 func = mul_process(func)
 
                 // 3. 替换e为exp，且做一些处理
+                func = ln_process(func) // 处理 ln(x)
                 func = exp_process(func)
 
                 // 4. 允许一些常见的没有括号的三角函数，例如cosx，sin3x
